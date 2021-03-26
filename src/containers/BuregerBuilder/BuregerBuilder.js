@@ -71,6 +71,22 @@ class BuregerBuilder extends Component {
   purchasHandeler = ()=>{
     this.setState({purchasing : true})
   }
+  purchasCancelHandeler = ()=>{
+    this.setState({purchasing : false})
+
+  }
+  purchasContinueHandeler = ()=> {
+    const queryParams = [];
+    for (let i in this.state.ingredients){
+      queryParams.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]))
+    }
+    queryParams.push("price="+this.state.totalPrice);
+    const queryString = queryParams.join("&");
+    this.props.history.push({
+      pathname:"/Checkout",
+      search:"?"+ queryString
+    })
+  }
   render() {
     const disabledInfo = {
       ...this.state.ingredients
@@ -115,34 +131,7 @@ class BuregerBuilder extends Component {
       </Aux>
     );
   }
-  purchasCancelHandeler = ()=>{
-    this.setState({purchasing : false})
 
-  }
-  purchasContinueHandeler = ()=> {
-    this.setState({loading : true});
-    const orders = {
-      ingredients:this.state.ingredients,
-      price:this.state.totalPrice,
-      customer:{
-        name:"jay pagada",
-        address:{
-          street:"sarita p-2",
-          zipCode:"395010",
-          country:"india"
-        },
-        email:"jaypagada@yahoo.com"
-      },
-      deliveryMethod:"fastest"
-    }
-    axios.post("/orders.json",orders)
-      .then(responce=>{
-        this.setState({loading:false,purchasing:false});
-        })
-      .catch(error=>{
-        this.setState({loading:false,purchasing:false});
-      });
-  }
 }
 
 export default BuregerBuilder;
