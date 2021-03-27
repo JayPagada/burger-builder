@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import Aux from "../../hoc/Aux/Aux";
+import Auxiliary from "../../hoc/Auxiliary/Auxiliary";
 import Burger from "../../Components/Burger/Burger";
 import BuildControls from "../../Components/Burger/BuildControls/BuildControls";
 import Model from '../../Components/UI/Model/Model'
@@ -102,7 +102,7 @@ class BuregerBuilder extends Component {
 
     if(this.state.ingredients){
       burger = (
-        <Aux>
+        <Auxiliary>
         <Burger ingredients={this.state.ingredients}/>
         <BuildControls ingredientAdded={this.addIngredientsHandeler}
                      ingredientRemoved={this.removeIngredientsHandeler}
@@ -110,7 +110,7 @@ class BuregerBuilder extends Component {
                      purchasable ={this.state.purchasable}
                      ordered = {this.purchasHandeler}
                      price={this.state.totalPrice}/>
-        </Aux>
+        </Auxiliary>
       );
       orderSummary = <OrderSummary
         ingredients={this.state.ingredients}
@@ -123,12 +123,12 @@ class BuregerBuilder extends Component {
     }
 
     return (
-      <Aux>
+      <Auxiliary>
         <Model show={this.state.purchasing} modelClose ={this.purchasCancelHandeler}>
           {orderSummary}
         </Model>
         {burger}
-      </Aux>
+      </Auxiliary>
     );
   }
 

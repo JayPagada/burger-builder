@@ -3,14 +3,14 @@ import Logo from "../../Logo/Logo";
 import NavigationItems from "../NavigationItems/NavigationItems";
 import classes from './SlideDrawer.module.css'
 import BackDrop from "../../UI/BackDrop/BackDrop";
-import Aux from "../../../hoc/Aux/Aux"
+import Auxiliary from "../../../hoc/Auxiliary/Auxiliary"
 const SliderDrawer = (props) =>{
   let attachedClasses = [classes.SlideDrawer,classes.Close];
   if (props.open){
     attachedClasses = [classes.SlideDrawer,classes.Open]
   }
     return (
-      <Aux>
+      <Auxiliary>
       <BackDrop show={props.open} clicked={props.closed}/>
       <div className={attachedClasses.join(" ")}>
         <div className={classes.Logo}>
@@ -20,7 +20,7 @@ const SliderDrawer = (props) =>{
           <NavigationItems/>
         </nav>
       </div>
-      </Aux>
+      </Auxiliary>
     );
   }
 
