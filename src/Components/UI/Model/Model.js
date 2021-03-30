@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import './Model.css'
-import Aux from '../../../hoc/Aux/Aux'
+import Auxiliary from '../../../hoc/Auxiliary/Auxiliary'
 import BackDrop from '../BackDrop/BackDrop'
 
 class Model extends Component {
@@ -10,14 +10,14 @@ class Model extends Component {
 
   render() {
     return (
-      <Aux>
+      <Auxiliary>
         <BackDrop show={this.props.show} clicked={this.props.modelClose}/>
         <div className='Model'
              style={{transform:this.props.show ? 'translateY(0)':'translateY(-100vh)',
                opecity:this.props.show ? 1 : 0   }}>
           {this.props.children}
         </div>
-      </Aux>
+      </Auxiliary>
     );
   }
 }
