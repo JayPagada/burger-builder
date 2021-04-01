@@ -6,20 +6,11 @@ import Model from '../../Components/UI/Model/Model'
 import OrderSummary from "../../Components/Burger/OrderSummary/OrderSummary";
 import axios from "../../Axios-Orders.js";
 import Spinner from "../../Components/UI/Spinner/Spinner";
-const ingredientsPrices = {
-  salad : 0.5,
-  cheese: 0.4,
-  bacon: 0.8,
-  meat: 1.4
-}
+import {connect} from "react-redux";
+
 class BuregerBuilder extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
+
   state = {
-  ingredients:null,
-    totalPrice:4,
-    purchasable:false,
     purchasing:false,
     loading:false
   }
@@ -32,42 +23,15 @@ class BuregerBuilder extends Component {
   }
 
   updatePurchasable = (ingredients) =>{
-
     const sum = Object.keys(ingredients)
       .map((key)=>{
       return ingredients[key]
     }).reduce((sum,el)=>{
       return sum +el;
       },0)
-    this.setState({purchasable : sum > 0})
+    return  sum > 0
   }
-  addIngredientsHandeler = (type)=>{
-    const  oldCount = this.state.ingredients[type];
-    const updatedCount = oldCount+1;
-    const  updatedIngredients ={
-      ...this.state.ingredients
-    };
-    updatedIngredients[type] = updatedCount;
-    const priceAddition = ingredientsPrices[type];
-    const newPrice = this.state.totalPrice + priceAddition;
-    this.setState({totalPrice:newPrice , ingredients:updatedIngredients})
-     this.updatePurchasable(updatedIngredients);
-  }
-  removeIngredientsHandeler = (type)=>{
-    const  oldCount = this.state.ingredients[type];
-    if(oldCount <= 0){
-      return ;
-    }
-    const updatedCount = oldCount-1;
-    const  updatedIngredients ={
-      ...this.state.ingredients
-    };
-    updatedIngredients[type] = updatedCount;
-    const priceDeduction = ingredientsPrices[type];
-    const newPrice = this.state.totalPrice - priceDeduction;
-    this.setState({totalPrice:newPrice , ingredients:updatedIngredients})
-    this.updatePurchasable(updatedIngredients);
-  }
+
   purchasHandeler = ()=>{
     this.setState({purchasing : true})
   }
@@ -80,7 +44,7 @@ class BuregerBuilder extends Component {
     for (let i in this.state.ingredients){
       queryParams.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]))
     }
-    queryParams.push("price="+this.state.totalPrice);
+    queryParams.push("price="+this.props.price);
     const queryString = queryParams.join("&");
     this.props.history.push({
       pathname:"/Checkout",
@@ -89,7 +53,7 @@ class BuregerBuilder extends Component {
   }
   render() {
     const disabledInfo = {
-      ...this.state.ingredients
+      ...this.props.ings
     };
 
     for(let key in disabledInfo){
@@ -100,23 +64,23 @@ class BuregerBuilder extends Component {
 
     let burger = <Spinner/>
 
-    if(this.state.ingredients){
+    if(this.props.ings){
       burger = (
         <Auxiliary>
-        <Burger ingredients={this.state.ingredients}/>
-        <BuildControls ingredientAdded={this.addIngredientsHandeler}
-                     ingredientRemoved={this.removeIngredientsHandeler}
+        <Burger ingredients={this.props.ings}/>
+        <BuildControls ingredientAdded={this.props.ingredientsAdded}
+                     ingredientRemoved={this.props.ingredientsRemove}
                      disabled={disabledInfo}
-                     purchasable ={this.state.purchasable}
+                     purchasable ={this.updatePurchasable(this.props.ings)}
                      ordered = {this.purchasHandeler}
-                     price={this.state.totalPrice}/>
+                     price={this.props.price}/>
         </Auxiliary>
       );
       orderSummary = <OrderSummary
-        ingredients={this.state.ingredients}
+        ingredients={this.props.ings}
         purchasCancel={this.purchasCancelHandeler}
         purchasContinue = {this.purchasContinueHandeler}
-        price={this.state.totalPrice}/>;
+        price={this.props.price}/>;
     }
     if (this.state.loading){
       orderSummary = <Spinner/>
@@ -131,7 +95,17 @@ class BuregerBuilder extends Component {
       </Auxiliary>
     );
   }
-
 }
-
-export default BuregerBuilder;
+const mapStateTOProps=(state)=>{
+  return{
+    ings: state.ingredients,
+    price:state.totalPrice
+  }
+}
+const mapDispatchToProps = (dispatch)=>{
+  return{
+    ingredientsAdded:(ingName)=>dispatch({type:"ADD_INGREDIENT" ,ingredientName:ingName}),
+    ingredientsRemove:(ingName)=>dispatch({type:"REMOVE_INGREDIENT" ,ingredientName:ingName})
+  }
+}
+export default connect(mapStateTOProps,mapDispatchToProps)(BuregerBuilder);
