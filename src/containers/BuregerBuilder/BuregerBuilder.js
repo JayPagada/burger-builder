@@ -4,10 +4,10 @@ import Burger from "../../Components/Burger/Burger";
 import BuildControls from "../../Components/Burger/BuildControls/BuildControls";
 import Model from '../../Components/UI/Model/Model'
 import OrderSummary from "../../Components/Burger/OrderSummary/OrderSummary";
-import axios from "../../Axios-Orders.js";
 import Spinner from "../../Components/UI/Spinner/Spinner";
 import {connect} from "react-redux";
-
+import * as burgerBuilderActions from "../../Store/actions/burgerBuilder.js"
+import * as orderActions from "../../Store/actions/order.js"
 class BuregerBuilder extends Component {
 
   state = {
@@ -16,10 +16,7 @@ class BuregerBuilder extends Component {
   }
 
   componentDidMount() {
-    axios.get("https://burger-builder-db98e-default-rtdb.firebaseio.com/ingredients.json")
-      .then(response=> {
-        this.setState({ingredients:response.data});
-      })
+    this.props.initingredients();
   }
 
   updatePurchasable = (ingredients) =>{
@@ -40,15 +37,9 @@ class BuregerBuilder extends Component {
 
   }
   purchasContinueHandeler = ()=> {
-    const queryParams = [];
-    for (let i in this.state.ingredients){
-      queryParams.push(encodeURIComponent(i) + "=" + encodeURIComponent(this.state.ingredients[i]))
-    }
-    queryParams.push("price="+this.props.price);
-    const queryString = queryParams.join("&");
+    this.props.onInitPurchase()
     this.props.history.push({
-      pathname:"/Checkout",
-      search:"?"+ queryString
+      pathname:"/Checkout"
     })
   }
   render() {
@@ -82,7 +73,7 @@ class BuregerBuilder extends Component {
         purchasContinue = {this.purchasContinueHandeler}
         price={this.props.price}/>;
     }
-    if (this.state.loading){
+      if (this.state.loading){
       orderSummary = <Spinner/>
     }
 
@@ -98,14 +89,17 @@ class BuregerBuilder extends Component {
 }
 const mapStateTOProps=(state)=>{
   return{
-    ings: state.ingredients,
-    price:state.totalPrice
+    ings: state.burgerBuilder.ingredients,
+    price:state.burgerBuilder.totalPrice,
+    purchased:state.order.purchasing
   }
 }
 const mapDispatchToProps = (dispatch)=>{
   return{
-    ingredientsAdded:(ingName)=>dispatch({type:"ADD_INGREDIENT" ,ingredientName:ingName}),
-    ingredientsRemove:(ingName)=>dispatch({type:"REMOVE_INGREDIENT" ,ingredientName:ingName})
+    ingredientsAdded:(ingName)=>dispatch(burgerBuilderActions.addIngredient(ingName)),
+    ingredientsRemove:(ingName)=>dispatch(burgerBuilderActions.removeIngredient(ingName)),
+    initingredients:()=>dispatch(burgerBuilderActions.initIngredients()),
+    onInitPurchase:()=>dispatch(orderActions.purchaseInit())
   }
 }
 export default connect(mapStateTOProps,mapDispatchToProps)(BuregerBuilder);

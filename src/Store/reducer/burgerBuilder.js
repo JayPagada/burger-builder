@@ -1,10 +1,6 @@
+import * as ActionCreators from "../actions/actionsTypes.js"
 const initialState = {
-  ingredients:{
-    salad : 0,
-    cheese: 0,
-    bacon: 0,
-    meat: 0
-  },
+  ingredients:null,
   totalPrice:4
 }
 const ingredientsPrices = {
@@ -15,7 +11,7 @@ const ingredientsPrices = {
 }
 const reduce = (state= initialState,action)=>{
 switch (action.type){
-  case "ADD_INGREDIENT":
+  case ActionCreators.ADD_INGREDIENT:
     return{
         ...state,
       ingredients: {
@@ -24,7 +20,7 @@ switch (action.type){
       },
       totalPrice: state.totalPrice + ingredientsPrices[action.ingredientName]
     }
-  case "REMOVE_INGREDIENT":
+  case ActionCreators.REMOVE_INGREDIENT:
     return{
       ...state,
       ingredients: {
@@ -33,6 +29,12 @@ switch (action.type){
       },
       totalPrice: state.totalPrice - ingredientsPrices[action.ingredientName]
 
+    }
+  case ActionCreators.SET_INGREDIENT:
+    return {
+      ...state,
+      ingredients: action.ingredients,
+      totalPrice:4
     }
   default:
     return state;
