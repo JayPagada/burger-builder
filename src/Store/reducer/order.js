@@ -3,7 +3,8 @@ import * as actionTypes from "../actions/actionsTypes.js"
 const initialState = {
   orders: [],
   loading: false,
-  purchasing: false
+  purchasing: false,
+  error:null
 }
 const reducer = (state = initialState, action) => {
   switch (action.type) {
@@ -42,10 +43,11 @@ const reducer = (state = initialState, action) => {
     case actionTypes.FETCH_ORDERS_FAIL:
       return {
         ...state,
-        loading: false
+        loading: false,
+        error: action.error,
       }
     default :
-      return state
+      return {...state}
   }
 }
 export default reducer

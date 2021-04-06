@@ -102,9 +102,10 @@ class ContactData extends Component {
       const orders = {
         ingredients:this.props.ings,
         price:this.props.price,
-        orderData : formData
+        orderData : formData,
+        userId: this.props.userId
       }
-    this.props.onOrderBurger(orders)
+    this.props.onOrderBurger(orders,this.props.token)
   }
   checkValidity = (value,rules)=>{
     let isValid = true;
@@ -169,12 +170,14 @@ const mapStateTOProps=(state)=>{
   return{
     ings: state.burgerBuilder.ingredients,
     price:state.burgerBuilder.totalPrice,
-    loading:state.order.loading
+    loading:state.order.loading,
+    token:state.auth.token,
+    userId: state.auth.userId
   };
 };
 const mapDispatchToProps = dispatch =>{
   return {
-    onOrderBurger : (orderData) =>dispatch(actions.purchaseBurgerStart(orderData))
+    onOrderBurger : (orderData,token) =>dispatch(actions.purchaseBurgerStart(orderData,token))
   }
 };
 export default connect(mapStateTOProps,mapDispatchToProps)(ContactData);

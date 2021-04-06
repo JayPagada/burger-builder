@@ -30,7 +30,12 @@ class BuregerBuilder extends Component {
   }
 
   purchasHandeler = ()=>{
-    this.setState({purchasing : true})
+    if (this.props.isAuthenticated) {
+      this.setState({purchasing: true})
+    }
+    else {
+      this.props.history.push("/Auth")
+    }
   }
   purchasCancelHandeler = ()=>{
     this.setState({purchasing : false})
@@ -64,6 +69,7 @@ class BuregerBuilder extends Component {
                      disabled={disabledInfo}
                      purchasable ={this.updatePurchasable(this.props.ings)}
                      ordered = {this.purchasHandeler}
+                       isAuth={this.props.isAuthenticated}
                      price={this.props.price}/>
         </Auxiliary>
       );
@@ -91,7 +97,8 @@ const mapStateTOProps=(state)=>{
   return{
     ings: state.burgerBuilder.ingredients,
     price:state.burgerBuilder.totalPrice,
-    purchased:state.order.purchasing
+    purchased:state.order.purchasing,
+    isAuthenticated:state.auth.token !== null
   }
 }
 const mapDispatchToProps = (dispatch)=>{
